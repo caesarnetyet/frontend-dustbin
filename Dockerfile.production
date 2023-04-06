@@ -1,0 +1,17 @@
+FROM node:18.15.0-alpine as build
+
+WORKDIR /app
+
+COPY package.json package-lock.json ./
+
+RUN npm install
+
+COPY . .
+
+RUN npm run build --prod
+
+#nginx
+FROM nginx:1.21.3-alpine
+
+COPY --from=build /app/dist/frontend-dustbin /usr/share/nginx/html
+
